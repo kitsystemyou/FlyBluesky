@@ -1,16 +1,18 @@
 from atproto import Client
 import os
-import time
-from datetime import datetime
-from zoneinfo import ZoneInfo
+from openai import completion
 
-client = Client(base_url='https://bsky.social')
-client.login(os.environ['MAIL'],
-             os.environ['PASS'])
 
-tl = time.localtime(time.time())
+def main():
+    client = Client(base_url='https://bsky.social')
+    client.login(os.environ['MAIL'], os.environ['PASS'])
 
-nowtime = datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y-%M-%D %H:%M:%S')
-post: str = "now! " + nowtime
-print("post: ", post)
-post = client.send_post(post)
+    content = completion()
+    print(content)
+    post = content[1:len(content) - 1] + " <bot with gpt-3.5-turbo>"
+    post_result = client.send_post(post)
+    print(post_result)
+
+
+if __name__ == "__main__":
+    main()
